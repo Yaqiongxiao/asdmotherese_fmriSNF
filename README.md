@@ -1,5 +1,5 @@
 
-ASD Toddlers and reduced mother-infants interaction-fMRI SNF analysis
+ASD Toddlers and Reduced Mother-Child Interactions-fMRI SNF Analysis
 
 Reproducible analysis reports from Xiao et al., submitted. ASD Toddlers Exhibit Impaired Development of Neural Systems That Respond to and Guide Mother-Child Interactions, Nature Neuroscience.
 
