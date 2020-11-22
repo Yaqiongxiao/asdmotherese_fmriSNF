@@ -39,8 +39,7 @@ Mods2table <- function(dat, ROIs, clins, cnames) {
 				
 			}
 		}
-		
-
+	
 	# save results as a table
 	FILTER <- matrix(NA, nrow = length(modList) , ncol = 6)
 	colnames(FILTER)[1:6] <- c("Variables",cnames)
@@ -55,7 +54,6 @@ Mods2table <- function(dat, ROIs, clins, cnames) {
 	FILTER[1:4, 1] <- rep(c("Communication scores", 
 				"Social scores"),2)
 	return(FILTER)
-
 }
 	
 	
