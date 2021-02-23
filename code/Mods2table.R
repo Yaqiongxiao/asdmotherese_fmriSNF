@@ -39,21 +39,24 @@ Mods2table <- function(dat, ROIs, clins, cnames) {
 				
 			}
 		}
-	
+		
+
 	# save results as a table
-	FILTER <- matrix(NA, nrow = length(modList) , ncol = 6)
-	colnames(FILTER)[1:6] <- c("Variables",cnames)
+	FILTER <- matrix(NA, nrow = length(modList)*4 , ncol = 7)
+	colnames(FILTER)[1:7] <- c("Variables",cnames)
 	for(i in 1:length(modList)) {
 		
-		FILTER[i, 2:3] <- round(summary(modList[[i]][[1]])$coefficients[2, 1:2],5)
-		FILTER[i, 4:5] <- round(summary(modList[[i]][[1]])$coefficients[2, 4:5],3)
-		FILTER[i, 6] <- round(modList[[i]][[2]][1],3)
+		FILTER[(i*4-3):(i*4), 2:3] <- round(summary(modList[[i]][[1]])$coefficients[2:5, 1:2],5)
+		FILTER[(i*4-3):(i*4), 4:6] <- round(summary(modList[[i]][[1]])$coefficients[2:5, 3:5],3)
+		FILTER[(i*4-3):(i*4), 7] <- round(modList[[i]][[2]][1],3)
 		
 	}
 	
-	FILTER[1:4, 1] <- rep(c("Communication scores", 
-				"Social scores"),2)
+	FILTER[1:(length(modList)*4), 1] <- rep(c("Communication scores", "scan_age","gender", "meanFD",
+				"Social scores","scan_age","gender", "meanFD"),2)
 	return(FILTER)
+
 }
+
 	
 	
