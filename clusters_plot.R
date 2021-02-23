@@ -33,7 +33,7 @@ clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
 	# add clustering index
 	aa <- aggregate(ROI_clinic_clusters, by=list(ROI_clinic_clusters$Clustering), FUN = mean)
 	
-	ab <- order(-aa$`Motherese_RHtemporal_psc`)
+	ab <- order(-aa$`Motherese_RHtemporal_psc`)[c(1,3,2,4)]
 
 	for (i in 1:max(ROI_clinic_clusters$Clustering)) {
 		ROI_clinic_clusters$index[ROI_clinic_clusters$Clustering == ab[i]] <- i
@@ -49,24 +49,25 @@ clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
 					 	   "Story_RHtemporal_psc","Karen_RHtemporal_psc","Motherese_RHtemporal_psc"))
 	
 	if (plotAll == FALSE) {
-		ROI_clinic_clusters_long_run <- ROI_clinic_clusters_long[ROI_clinic_clusters_long$index !=5, ]
+		ROI_clinic_clusters_long_run1 <- ROI_clinic_clusters_long[ROI_clinic_clusters_long$index !=5, ]
 	} else {
-		ROI_clinic_clusters_long_run <- ROI_clinic_clusters_long
+		ROI_clinic_clusters_long_run1 <- ROI_clinic_clusters_long
 	}
 	
 	# plot fMRI/ROI data 
-	p_ROIs <- ggplot(ROI_clinic_clusters_long_run, aes(x = test, y = values, fill = index)) + 
-		geom_boxplot(outlier.shape = NA)+ 
+	p_ROIs <- ggplot(ROI_clinic_clusters_long_run1, aes(x = test, y = values, fill = index)) + 
+		geom_boxplot(outlier.shape = NA,width = 0.9)+ 
 		geom_point(aes(col = index), color = "black", size = 1, alpha = 0.8, 
-			   position = position_jitterdodge()) + 
+			   position = position_jitterdodge(dodge.width = 1.1)) + 
 		labs(y = "% Signal Change [Speech vs. Rest]", x = "ROI results") +
+		guides(fill = F) +
 		theme(legend.title = element_text(colour="black", size=14, face="bold"),
 		      legend.text = element_text(colour="black", size=14, face="bold")) +
 		theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"))+
-		theme(axis.text.x = element_text(size = 10, face = "bold", angle = 40, hjust = 1),
-		      axis.text.y = element_text(size = 10, face = "bold"),
-		      axis.title.y = element_text(size = 12, face = "bold"),
-		      axis.title.x = element_blank()) +
+		theme(axis.text.x = element_text(size = 14, face = "bold", angle = 40, hjust = 1),
+		      axis.text.y = element_text(size = 14, face = "bold"),
+		      axis.title.y = element_text(size = 16, face = "bold")) +
+	#	theme(axis.title.x = element_blank(),axis.text.x = element_blank()) +
 		theme(panel.background = element_blank(),
 		      panel.grid = element_blank(),
 		      panel.border = element_blank(),
@@ -80,6 +81,9 @@ clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
 		coord_cartesian(ylim=c(-0.1,0.25)) + 
 		scale_y_continuous(breaks = seq(-0.1,0.25, 0.1))
 		
+	#ggsave(paste0("~/Dropbox/research/UCSD/research/data_anaysis/new_fMRI_data/fmriSNF/SNF_results/vars_all_50subj/barplot_ROIs.png"), 
+	 #      width = 7, height = 5,units = c("in"), dpi = 200)
+	
 	print(p_ROIs)
 	
 	# organize data for plotting clinical data
@@ -92,9 +96,9 @@ clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
 	
 	# if plotting all clusters
 	if (plotAll == FALSE) {
-		ROI_clinic_clusters_long_run <- ROI_clinic_clusters_long[ROI_clinic_clusters_long$index !=5, ]
+		ROI_clinic_clusters_long_run2 <- ROI_clinic_clusters_long[ROI_clinic_clusters_long$index !=5, ]
 	} else {
-		ROI_clinic_clusters_long_run <- ROI_clinic_clusters_long
+		ROI_clinic_clusters_long_run2 <- ROI_clinic_clusters_long
 	}
 	
 	# plot
@@ -105,25 +109,28 @@ clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
 		    "Vineland Domain Total", "Vineland Motor", "Vineland Socialization")
 	
 	for (i in 1:14) {
-		test <- levels(ROI_clinic_clusters_long_run$test)[i]
-		tmp <- ROI_clinic_clusters_long_run[ROI_clinic_clusters_long_run$test == test, ]
+		test <- levels(ROI_clinic_clusters_long_run2$test)[i]
+		tmp <- ROI_clinic_clusters_long_run2[ROI_clinic_clusters_long_run2$test == test, ]
 		tmp <- tmp[tmp$values != 0, ]
 		
 		p_clinic <- ggplot(tmp, aes(x = index, y = values, fill = index)) +
-			geom_boxplot(width = 1,outlier.shape = NA) +
+			geom_boxplot(width = 0.9,outlier.shape = NA) +
 			geom_point(aes(col = index), color = "black", size = 3, alpha = 0.6, position = position_jitterdodge(dodge.width = 1)) +
 			labs(y = "Scores", x = "Cluster", title = titles[i]) +
 			guides(fill = F) +
 			theme(legend.title = element_text(colour="black", size=14, face="bold"),
 			      legend.text = element_text(colour="black", size=14, face="bold")) +
 			theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"))+
-			theme(axis.text = element_text(size = 14, face = "bold"),
-			      axis.title = element_text(size = 16, face = "bold")) +
+			theme(axis.text.y = element_text(size = 16, face = "bold"),
+			      axis.title.y = element_text(size = 16, face = "bold")) +
+			theme( axis.text.x = element_blank(),  axis.title.x = element_blank(),
+			       axis.ticks.x = element_blank()) + 
 			theme(panel.background = element_blank(),
 			      panel.grid = element_blank(),
 			      panel.border = element_blank(),
 			      axis.line = element_line(colour = "black"))
+		
 	print(p_clinic)	
 	}
-	return(list(nn,ROI_clinic_clusters))
+	return(list(nn,ROI_clinic_clusters,ROI_clinic_clusters_long_run1))
 }
