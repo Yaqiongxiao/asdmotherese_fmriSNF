@@ -54,40 +54,55 @@ clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
 		ROI_clinic_clusters_long_run1 <- ROI_clinic_clusters_long
 	}
 	
-	# plot fMRI/ROI data 
-	p_ROIs <- ggplot(ROI_clinic_clusters_long_run1, aes(x = test, y = values, fill = index)) + 
-		geom_boxplot(outlier.shape = NA,width = 0.9)+ 
-		geom_point(aes(col = index), color = "black", size = 1, alpha = 0.8, 
-			   position = position_jitterdodge(dodge.width = 1.1)) + 
-		labs(y = "% Signal Change [Speech vs. Rest]", x = "ROI results") +
-		guides(fill = F) +
+
+	## barplots of %signal changes
+	tmp <- ROI_clinic_clusters_long_run1
+	tmp$test <- factor(tmp$test, levels = levels(tmp$test)[c(1,4,2,5,3,6)])
+	tmp$gr[grep("Story*", tmp$test)] <- "Story"
+	tmp$gr[grep("Karen*", tmp$test)] <- "Karen"
+	tmp$gr[grep("Motherese*", tmp$test)] <- "Motherese"
+	tmp$gr <- as.factor(tmp$gr)
+	
+	# barplot of average %signal changes for each cluster
+	library(scales)
+	
+	tmp1 <- aggregate(values ~ subj + index, FUN = mean, tmp[grep("LHtemporal",tmp$test),])
+	tmp2 <- aggregate(values ~ subj + index, FUN = mean, tmp[grep("RHtemporal",tmp$test),])
+	
+	tmp3 <- cbind(tmp1,tmp2[3])
+	
+	colnames(tmp3)[3:4] <- c("LHtemporal", "RHtemporal")
+	
+	tmp4 <- gather(tmp3, test, values, 3:4)
+	
+	tmp5 <- tmp4[order(tmp4$subj),]
+	tmp5$index <- as.factor(tmp5$index)
+	
+p_ROIs_barplot <- ggplot(tmp5, aes(x = index, y = values,group = test, fill = index)) + 
+		geom_bar(width = 0.8, stat = "summary",fun = "mean", color = "black", position = position_dodge(width = 0.8)) + 
+		geom_errorbar(width = 0.6, stat = "summary", fun.data = "mean_se", position = position_dodge(width = 0.8)) +
+		labs(y = "% Signal Change [Speech vs. Rest]", x = "", title = "ROI activation") +
+		#guides(fill = F) +
 		theme(legend.title = element_text(colour="black", size=14, face="bold"),
 		      legend.text = element_text(colour="black", size=14, face="bold")) +
 		theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"))+
-		theme(axis.text.x = element_text(size = 14, face = "bold", angle = 40, hjust = 1),
-		      axis.text.y = element_text(size = 14, face = "bold"),
-		      axis.title.y = element_text(size = 16, face = "bold")) +
-	#	theme(axis.title.x = element_blank(),axis.text.x = element_blank()) +
+		theme(axis.text.x = element_blank(),
+		      axis.ticks.x = element_blank(),
+		      axis.text.y = element_text(size = 10, face = "bold"),
+		      axis.title.y = element_text(size = 10, face = "bold")) +
+		scale_fill_hue(name = "Cluster") + 
 		theme(panel.background = element_blank(),
 		      panel.grid = element_blank(),
 		      panel.border = element_blank(),
 		      axis.line = element_line(colour = "black")) + # remove background
-		scale_x_discrete(labels=c("Story_LHtemporal_psc" = "Story language left temporal",
-					  "Story_RHtemporal_psc" = "Story language right temporal",
-					  "Karen_LHtemporal_psc" = "Karen language left temporal",
-					  "Karen_RHtemporal_psc" = "Karen language right temporal",
-					  "Motherese_LHtemporal_psc" = "Motherese left temporal",
-					  "Motherese_RHtemporal_psc" = "Motherese right temporal")) +
-		coord_cartesian(ylim=c(-0.1,0.25)) + 
-		scale_y_continuous(breaks = seq(-0.1,0.25, 0.1))
-		
-	#ggsave(paste0("~/Dropbox/research/UCSD/research/data_anaysis/new_fMRI_data/fmriSNF/SNF_results/vars_all_50subj/barplot_ROIs.png"), 
-	 #      width = 7, height = 5,units = c("in"), dpi = 200)
+		coord_cartesian(ylim=c(0.00,0.12)) + 
+		scale_y_continuous(breaks = seq(0.00,0.12, 0.02))	
 	
-	print(p_ROIs)
-	
-	# organize data for plotting clinical data
-	ROI_clinic_clusters_long <- gather(ROI_clinic_clusters, test, values, final_ados_CoSoTot:final_mullen_ELC_Std)
+	print(p_ROIs_barplot)	
+
+	## organize data for plotting clinical data
+	ab <- colnames(dplyr::select(ROI_clinic_clusters, contains("final")))
+	ROI_clinic_clusters_long <- gather(ROI_clinic_clusters, test, values, ab[1]:ab[length(ab)])
 	head(ROI_clinic_clusters_long)
 	
 	ROI_clinic_clusters_long$index <- as.factor(ROI_clinic_clusters_long$index)
@@ -101,14 +116,14 @@ clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
 		ROI_clinic_clusters_long_run2 <- ROI_clinic_clusters_long
 	}
 	
-	# plot
+	# plot clinical data
 
 	titles <- c("ADOS SA", "ADOS Total", "ADOS RRB", "Mullen ELC", "Mullen ELT",
 		    "Mullen FMT", "Mullen RLT", "Mullen VRT", "Vineland ABC", 
 		    "Vineland Communication", "Vineland Daily Living Skills", 
 		    "Vineland Domain Total", "Vineland Motor", "Vineland Socialization")
 	
-	for (i in 1:14) {
+	for (i in 1:length(titles)) {
 		test <- levels(ROI_clinic_clusters_long_run2$test)[i]
 		tmp <- ROI_clinic_clusters_long_run2[ROI_clinic_clusters_long_run2$test == test, ]
 		tmp <- tmp[tmp$values != 0, ]
