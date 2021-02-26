@@ -1,6 +1,8 @@
 # function to plot ROI and clinical test data across clusters 
 
-clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
+# function to plot ROI and clinical test data across clusters 
+
+clusters_plot <- function(dat, clusters, ROI_var, clinic_var) {
 
 	# DESCRIPTION
 	# This function plots boxplot graph by cluster/index, with invidual points 
@@ -11,7 +13,6 @@ clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
 	# dat = data frame to process
 	# ROI_var = a string denoting ROI variables
 	# clinic_var = a string denoting clinical variables
-	# plotAll = if plot all clusters or not; plot 4 main clusters by default 
 	#
 	# OUTPUT
 	# a boxplot graph with inidividual values/scores
@@ -48,15 +49,9 @@ clusters_plot <- function(dat, clusters, ROI_var, clinic_var, plotAll = FALSE) {
 					 levels = c("Story_LHtemporal_psc","Karen_LHtemporal_psc","Motherese_LHtemporal_psc",
 					 	   "Story_RHtemporal_psc","Karen_RHtemporal_psc","Motherese_RHtemporal_psc"))
 	
-	if (plotAll == FALSE) {
-		ROI_clinic_clusters_long_run1 <- ROI_clinic_clusters_long[ROI_clinic_clusters_long$index !=5, ]
-	} else {
-		ROI_clinic_clusters_long_run1 <- ROI_clinic_clusters_long
-	}
-	
-
 	## barplots of %signal changes
-	tmp <- ROI_clinic_clusters_long_run1
+	ROI_clinic_clusters_long_run <- ROI_clinic_clusters_long
+	tmp <- ROI_clinic_clusters_long_run
 	tmp$test <- factor(tmp$test, levels = levels(tmp$test)[c(1,4,2,5,3,6)])
 	tmp$gr[grep("Story*", tmp$test)] <- "Story"
 	tmp$gr[grep("Karen*", tmp$test)] <- "Karen"
@@ -100,6 +95,7 @@ p_ROIs_barplot <- ggplot(tmp5, aes(x = index, y = values,group = test, fill = in
 	
 	print(p_ROIs_barplot)	
 
+
 	## organize data for plotting clinical data
 	ab <- colnames(dplyr::select(ROI_clinic_clusters, contains("final")))
 	ROI_clinic_clusters_long <- gather(ROI_clinic_clusters, test, values, ab[1]:ab[length(ab)])
@@ -109,23 +105,17 @@ p_ROIs_barplot <- ggplot(tmp5, aes(x = index, y = values,group = test, fill = in
 	
 	ROI_clinic_clusters_long$test <- as.factor(ROI_clinic_clusters_long$test)
 	
-	# if plotting all clusters
-	if (plotAll == FALSE) {
-		ROI_clinic_clusters_long_run2 <- ROI_clinic_clusters_long[ROI_clinic_clusters_long$index !=5, ]
-	} else {
-		ROI_clinic_clusters_long_run2 <- ROI_clinic_clusters_long
-	}
-	
 	# plot clinical data
 
 	titles <- c("ADOS SA", "ADOS Total", "ADOS RRB", "Mullen ELC", "Mullen ELT",
 		    "Mullen FMT", "Mullen RLT", "Mullen VRT", "Vineland ABC", 
 		    "Vineland Communication", "Vineland Daily Living Skills", 
 		    "Vineland Domain Total", "Vineland Motor", "Vineland Socialization")
+
 	
 	for (i in 1:length(titles)) {
-		test <- levels(ROI_clinic_clusters_long_run2$test)[i]
-		tmp <- ROI_clinic_clusters_long_run2[ROI_clinic_clusters_long_run2$test == test, ]
+		test <- levels(ROI_clinic_clusters_long$test)[i]
+		tmp <- ROI_clinic_clusters_long[ROI_clinic_clusters_long$test == test, ]
 		tmp <- tmp[tmp$values != 0, ]
 		
 		p_clinic <- ggplot(tmp, aes(x = index, y = values, fill = index)) +
@@ -146,6 +136,7 @@ p_ROIs_barplot <- ggplot(tmp5, aes(x = index, y = values,group = test, fill = in
 			      axis.line = element_line(colour = "black"))
 		
 	print(p_clinic)	
+
 	}
-	return(list(nn,ROI_clinic_clusters,ROI_clinic_clusters_long_run1))
+	return(list(nn,ROI_clinic_clusters,ROI_clinic_clusters_long_run))
 }
