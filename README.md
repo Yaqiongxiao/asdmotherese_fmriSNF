@@ -1,5 +1,5 @@
 
-# ASD Toddlers and Reduced Response/Attention to Motherese Speech – fMRI SNF Analysis
+# Neural Response to Affective Speech Links to Attention to Motherese in ASD Toddlers
 
 Reproducible analysis reports from Xiao et al., Neural responses to affective speech, including motherese, map onto clinical 
 and social eye tracking profiles in ASD toddlers. _Nature Human Behavior_, Accepted. 
