@@ -24,7 +24,7 @@ ROI_psc_plot <- function(dat, ROI, constrast) {
 		geom_boxplot(width = 0.8,outlier.shape = NA, 
 			     position = position_dodge(width = 0.9),alpha = 0.4, size=1) +
 		geom_point(aes(col = group), size = 3,  position = position_jitterdodge(jitter.width = 0.3)) + 
-		labs(y = "% Signal Change [Speech vs. Rest]", x = " ") +
+		labs(y = "% Signal change [speech vs. rest]", x = " ") +
 		#guides(color = 'none') +
 		theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
 		      axis.text = element_text(hjust = 0.5, size = 12, face = "bold"),
