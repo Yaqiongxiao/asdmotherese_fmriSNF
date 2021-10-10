@@ -21,7 +21,7 @@ ET_clusters <- function(dat) {
 		geom_point(aes(fill = index), size = 3, alpha = 0.6, position = position_jitterdodge(jitter.width = 0.3)) + 
 		stat_summary(fun = "mean", geom = "point", shape = 4, size = 7, color = "white", stroke = 2) + 
 		labs(y = "% Motherese", x = "Cluster") +
-		guides(color = F, fill = F) +
+		guides(color = 'none', fill = 'none') +
 		theme(plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
 		      axis.text = element_text(size = 16, face = "bold"),
 		      axis.title = element_text(size = 16, face = "bold"))+
