@@ -31,10 +31,9 @@ ROI_behavior_plot <- function(dat, var, ROI, xlab) {
 	# plot
 	p <- ggplot(dat, aes_string(x = var, y = ROI)) +
 		geom_point(aes(color = group),position = "jitter", size = 3) +
-		geom_abline(intercept =, slope = slope, size = 2, col = "black") + 
-		#geom_smooth(method = "lm", alpha = 0.5, size = 2, col = "black") + 
+		geom_abline(intercept =intercept, slope = slope, size = 2, col = "black") + 
 		guides(color = F) + 
-		labs(x = xlab, y = "% Signal Change [Speech vs. Rest]") +
+		labs(x = xlab, y = "% Signal change [speech vs. rest]") +
 		scale_color_manual(values = c("#e66101", "#5e3c99")) + 
 		theme(legend.title = element_text(colour="black", size=16, face="bold"), 
 		      legend.text = element_text(colour="black", size=16, face="bold")) +
